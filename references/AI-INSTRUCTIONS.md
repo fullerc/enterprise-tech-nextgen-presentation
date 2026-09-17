@@ -34,8 +34,8 @@ Give the assistant the *message* of each slide, not finished copy — it turns e
 
 ## Iteration template
 
-> Update the Mermaid `graph TD` in the architecture section: reorder Data Model nodes so edges that share a target do not create long crossing lines; merge redundant subgraphs; cap diagram height with `.mermaid-wrap` CSS.  
-> Or: **Condense** vertical space: smaller `flowchart.rankSpacing`, shorter node labels, `max-height: 60vh` on the SVG.
+> Update the Mermaid `graph LR` in the architecture section: keep it left-to-right so it fills the 16:9 slide (top-down leaves the middle and right empty); reorder Data Model nodes so edges that share a target do not create long crossing lines; merge redundant subgraphs; let the SVG fill the width with `max-width: 100% !important; width: 100%; height: auto; max-height: 62vh` on `.mermaid-wrap .mermaid svg`.  
+> Or: **Condense** a diagram that runs too wide: shorter node labels, smaller `flowchart.rankSpacing`, or split one deep branch to `graph TD` only if the flow is genuinely many layers.
 
 ## Presenter notes (speaker notes)
 

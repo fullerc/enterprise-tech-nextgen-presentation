@@ -210,10 +210,11 @@ Inject per slide (inside `.deck-slide`):
 ## 9. Mermaid (architecture)
 
 - **Import:** `import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs'`.
-- **Config:** `theme: 'base'`, `flowchart: { nodeSpacing, rankSpacing, padding }` to avoid overflow.
+- **Config:** `theme: 'base'`, `flowchart: { nodeSpacing, rankSpacing, padding }` to avoid overflow. For a left-to-right graph, widen `rankSpacing` (~70) so the horizontal layers have room.
 - **`themeVariables`:** set `primaryColor`, `lineColor`, `fontFamily` to match deck; `background: 'transparent'`, `edgeLabelBackground` for readable labels on dark bg.
-- **Content:** `graph TD`, `subgraph` for layers, avoid a **duplicate** subgraph for a single child if an edge label already says “Template Action” (merge into one subgraph).
-- **Size cap:** `.mermaid-wrap .mermaid svg { max-height: 60vh; }` to avoid clipping on short laptops.
+- **Direction — go left-to-right by default:** use `graph LR`, not `graph TD`. A slide is 16:9, so a horizontal flow fills the width; top-down stacks nodes in a column and leaves the middle and right empty. Reserve `TD` for genuinely deep flows (many layers), not a linear chain.
+- **Content:** `subgraph` for layers, avoid a **duplicate** subgraph for a single child if an edge label already says “Template Action” (merge into one subgraph).
+- **Fill the slide:** `.mermaid-wrap .mermaid svg { max-width: 100% !important; width: 100%; height: auto; max-height: 62vh; }`. The `!important` overrides Mermaid's inline `max-width` cap so a short-and-wide `LR` diagram scales up to the full slide width instead of stopping at its natural size; the viewBox preserves aspect ratio, and `max-height` keeps taller author diagrams from clipping on short laptops. Center it with `.mermaid-wrap .mermaid { display: flex; justify-content: center; }`.
 
 ---
 

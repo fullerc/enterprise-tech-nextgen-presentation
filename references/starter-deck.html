@@ -11,7 +11,7 @@
     mermaid.initialize({
       startOnLoad: true,
       theme: 'base',
-      flowchart: { nodeSpacing: 18, rankSpacing: 30, padding: 8 },
+      flowchart: { nodeSpacing: 24, rankSpacing: 70, padding: 8 },
       themeVariables: {
         primaryColor: 'rgba(96,165,250,0.15)',
         primaryBorderColor: '#60a5fa',
@@ -135,7 +135,12 @@
     .step p { font-size: 0.78rem; color: rgba(255,255,255,0.7); margin: 0; }
 
     .mermaid-wrap { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--eht-radius); padding: 10px; overflow-x: auto; }
-    .mermaid-wrap .mermaid svg { max-height: 55vh; width: 100%; }
+    /* Center the diagram and let it scale up to fill the wide slide without distorting.
+       Override Mermaid's inline max-width cap so a left-to-right graph grows to the full
+       slide width instead of leaving the middle and right empty. Aspect ratio is preserved
+       (the SVG viewBox scales uniformly); max-height keeps taller author diagrams in frame. */
+    .mermaid-wrap .mermaid { display: flex; justify-content: center; }
+    .mermaid-wrap .mermaid svg { max-width: 100% !important; width: 100%; height: auto; max-height: 62vh; }
 
     .reveal-item { opacity: 0; transform: translateY(20px); transition: opacity 0.55s ease, transform 0.55s ease; }
     .reveal-item.reveal-2 { transition-delay: 0.1s; }
@@ -272,7 +277,7 @@
       <div class="deck-slide__inner">
         <p class="slide-eyebrow reveal-item">How it fits together</p>
         <div class="mermaid-wrap reveal-item reveal-2" style="margin-top:14px">
-          <pre class="mermaid">graph TD
+          <pre class="mermaid">graph LR
   subgraph a["User layer"]
     U1["Record page A"]
   end
