@@ -6,6 +6,40 @@ It is **account-agnostic**: swap tokens and copy; do not treat any example as a 
 
 ---
 
+## 0. House style: Keynote / WWDC (default)
+
+This system's default is an **Apple Keynote / WWDC** presentation style, not a dense slide deck:
+
+- **Dark slides, large white text, one idea per slide.** A standard slide carries a single short statement (or one word / one number) in large type. The audience should be able to grasp it in a glance.
+- **A little support is welcome; walls of text are not.** Beyond the statement, a slide may carry **one short support line** and **2–4 brief cue points** (3–5 words each). These are cues the presenter *expands on verbally* — not the script. Keep them terse and scannable.
+- **The slide leads; the presenter expands.** On-slide copy is a *lead-in*, not the script. The detail — evidence, the numbers, nuance, the story — is spoken and lives in the presenter notes (§11), which is why notes are **required** in this house style. If the audience can read the whole talk off the slide, the slide has too much on it.
+- **No body paragraphs or dense bullet lists on standard slides.** If a point needs a full sentence or a paragraph, it belongs in `data-notes`, not on the slide. Cue points are fragments, not sentences.
+- **Density is opt-in.** The dense components in §5 (card grids, steppers, data tables) are available when a slide genuinely needs a diagram, a single table, or a small visual — but they are not the default. Reach for them deliberately, one per slide at most.
+
+### Keynote type scale
+
+Large type is enforced by dedicated classes, all responsive via `clamp()` (sizes shown at a 16px root):
+
+| Class | Role | Size |
+| --- | --- | --- |
+| `.kv-word` | Single hero word or number | `clamp(3rem, 10vw, 8rem)`, weight 700, `line-height: 1` |
+| `.kv-statement` | The one big line per slide | `clamp(2.4rem, 6vw, 5rem)`, weight 600–700, `line-height: 1.05` |
+| `.kv-support` | At most **one** short support line under the statement | `clamp(1.1rem, 2vw, 1.5rem)`, muted white |
+| `.kv-points` / `.kv-point` | **2–4** brief cue points (3–5 words each). Stacked by default; add `.kv-points--row` for a row of small tiles | `clamp(1.1rem, 2vw, 1.5rem)` per point |
+| `.slide-eyebrow` | Tiny kicker above the statement — the one deliberately small element | `~0.8rem`, uppercase, low emphasis |
+
+**Cue points, not bullets.** `.kv-point` items are short fragments the presenter expands on — keep them to 3–5 words, never full sentences, and never more than four per slide. If you need more than four, or a point runs to a sentence, the detail belongs in `data-notes`.
+
+**Content-text floor:** any text the audience must *read* sits at ~`1.1rem` or larger. The only sub-`1rem` text allowed is non-content chrome (the eyebrow and the nav). The old dense body sizes (`0.78–0.95rem`) are for the optional §5 components only, not standard slides.
+
+**Color:** white text on dark is the default. The accent / electric-blue color emphasizes at most one word, never a whole line. Large white on dark clears WCAG AA trivially, but re-check contrast after brand-extraction retinting (§2a).
+
+### Layout helper
+
+- `.kv-slide` — a `.deck-slide` variant that flex-centers its `.deck-slide__inner`, single column, generous padding. Add `.kv-center` to center the statement, support line, and points. Use it for standard slides (statement + optional support line + optional cue points); keep the existing backgrounds, sparkle field, reveal animation, and reduced-motion support.
+
+---
+
 ## 1. File shape
 
 - **Single HTML file** is enough: inline `<style>` and `<script>`, no bundler.
@@ -29,6 +63,47 @@ Typical `:root` variables:
 | `--shadow` | Optional card shadow |
 
 **Theming:** Change tokens once; search for `rgba(96,165,250` if you need to retint the “electric blue” glass color.
+
+---
+
+## 2a. Brand extraction from a customer site
+
+The deck is branded from the customer's public website. Read the site's design language, then feed it into the §2 tokens rather than picking colors by hand. Fetch with `WebFetch` first; fall back to the browser tools (rendered screenshot + computed styles on `body`, headings, and the primary button) when `WebFetch` can't recover colors or fonts (JS-rendered or gated sites). If the site is unreachable, keep the framework defaults, tell the user, and offer to accept pasted brand colors.
+
+### What to extract
+
+- **Background / surface colors** — the page base and card/panel fills.
+- **Primary + secondary brand colors** — the dominant hues.
+- **One accent / CTA color** — the button or highlight color.
+- **Heading font** and **body font** — family names (and weights if obvious).
+- **Visual tone** — minimal, dense, corporate, playful, editorial, etc.
+- **Significant motifs** — corner style (rounded vs. sharp), heavy gradients, mono accents, generous vs. tight spacing.
+
+### Token mapping (extracted value → framework token)
+
+| Extracted from site | Framework token |
+| --- | --- |
+| Brand primary / secondary (deep) | `--br-blue-primary` / `--br-blue-secondary` — retint the deep base and table headers |
+| Accent / CTA color | `--br-accent` — the **one** reserved CTA color |
+| Secondary / tertiary hues | `--br-blue-bright`, `--br-cyan`, `--br-violet`, `--br-emerald` — orbs, sparkles, decorative strokes |
+| Corner style | `--br-radius` |
+| Heading + body fonts | Google Fonts `<link>` in `<head>` + the font-family declarations |
+| Card fill / shadow feel | `--shadow` |
+
+After retinting, also update the Mermaid `themeVariables` (§9) — `primaryColor`, `lineColor`, `fontFamily` — so the diagram matches the new palette instead of the default blue. Sweep the `rgba(96,165,250` glass color (§2) so the electric-blue emphasis picks up the brand hue.
+
+### Two application modes (ask the user which)
+
+- **Inspire (default shell):** keep the dark boardroom base and glass. Recolor accents, orbs, sparkles, and the CTA to the brand; adopt the brand heading font **only if it's legible on the dark base**. Use the electric-blue glass (retinted) for secondary emphasis.
+- **Match closely:** reproduce the site more literally. Allow a lighter base if the brand is light; use the exact palette and both fonts.
+
+Both modes must still: reserve **one** accent for the primary CTA, meet **WCAG AA** text contrast on the chosen base (re-check after retinting), and keep the `prefers-reduced-motion` off-switch for sparkles and particles.
+
+### Guardrails
+
+- Use colors and fonts for **inspiration**, not scraped media. **Never** embed the customer's logo or copyrighted image/font files pulled from the fetched page.
+- Load fonts from **Google Fonts** (a `<link>`), or a `@font-face` only when the user supplies the font files. Do not hotlink the customer's private font assets.
+- Keep the existing content guardrails: placeholders for names, logos, and non-public financials unless the user pastes approved copy.
 
 ---
 
@@ -70,7 +145,9 @@ Typical `:root` variables:
 
 ---
 
-## 5. Reusable content components
+## 5. Optional density components (use sparingly)
+
+These are the denser building blocks. In the Keynote house style (§0) they are **opt-in**, not the default: use one when a slide genuinely needs a diagram, a single data table, or a small visual — never as a way to pack a slide with text. At most one per slide, and prefer pushing the surrounding detail into `data-notes`.
 
 | Class / pattern | Use |
 | --- | --- |
@@ -158,6 +235,8 @@ A single IIFE or module script at bottom:
 ## 11. Presenter notes (speaker notes)
 
 The starter includes a **hidden presenter-notes window** so the speaker can read a talk track that the audience never sees.
+
+**Required in this house style.** Because the slide is a lead-in and the detail is spoken (§0), **every** `<section data-slide>` must carry a real `data-notes` talk track — none should read `(no notes for this slide)`. The on-slide statement, support line, and cue points are hooks; the notes stay a **full** talk track that expands each one. When a slide carries only a statement, **draft** the fuller talk track from the presenter's intent so the detail that isn't on the slide is captured in the notes; the presenter edits from there. The notes are where the sentence or paragraph behind each cue point goes.
 
 **Authoring — per-slide attributes on each `<section data-slide>`:**
 

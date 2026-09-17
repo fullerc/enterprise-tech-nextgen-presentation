@@ -2,6 +2,8 @@
 
 A [Claude Code](https://docs.claude.com/en/docs/claude-code) / Cursor **skill** that generates a "next-gen" single-file HTML scroll-deck for enterprise presales — no build, no npm, one `.html` file you can open in any browser.
 
+- **Keynote / WWDC house style** — dark slides, one large statement per slide with a short support line and a few brief cue points; the detail lives in the presenter notes, not on the screen
+- **Brand extraction** — give Claude the customer's website and it pulls a palette and fonts to brand the deck, asking whether to *inspire* (keep the dark shell) or *match* the site
 - **Dark navy + electric-blue glass** aesthetic; one accent color reserved for the primary CTA
 - **Scroll-snap sections** (`.deck-slide` at full viewport height) with a fixed nav
 - **Mermaid** architecture diagrams from a CDN (no local install)
@@ -17,16 +19,17 @@ A Claude Code skill lives at `~/.claude/skills/<name>/`. Clone this repo straigh
 git clone https://github.com/fullerc/enterprise-tech-nextgen-presentation.git ~/.claude/skills/enterprise-tech-nextgen-presentation
 ```
 
-It's picked up automatically on the next Claude Code launch — no registration step. Ask Claude to "build a presales deck / pitch deck / Agentforce solution story" and the skill kicks in, or reference `starter-deck` directly.
+It's picked up automatically on the next Claude Code launch — no registration step. Ask Claude to "build a presales deck / pitch deck / Agentforce solution story" and the skill kicks in, or reference `starter-deck` directly. Claude asks for the customer's website first and brands the deck from it.
 
 ## Quick start (by hand)
 
 1. Copy [`references/starter-deck.html`](references/starter-deck.html) to a new file (e.g. `decks/2026-acme-agentforce.html`).
 2. Edit the `:root` CSS variables for **your** brand — reserve one accent for the primary CTA.
-3. Match each nav link to a `section#id`.
-4. Open the file in a browser — no `npm install`.
-5. Edit copy directly in the `.html` in Cursor / VS Code for version control.
-6. *(Optional)* Add a talk track via `data-notes` / `data-note-title` / `data-note-time` on each `<section data-slide>`, then press **Shift+P** to open the hidden presenter-notes window. Allow the popup once per browser.
+3. Keep the Keynote house style: one large statement per slide, an optional support line, and 2–4 short cue points — no paragraphs. Put the detail in `data-notes`.
+4. Match each nav link to a `section#id`.
+5. Open the file in a browser — no `npm install`.
+6. Edit copy directly in the `.html` in Cursor / VS Code for version control.
+7. *(Optional)* Add a talk track via `data-notes` / `data-note-title` / `data-note-time` on each `<section data-slide>`, then press **Shift+P** to open the hidden presenter-notes window. Allow the popup once per browser.
 
 ## What's in the box
 

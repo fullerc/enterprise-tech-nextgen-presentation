@@ -83,7 +83,29 @@
         radial-gradient(ellipse 40% 55% at 5% 85%, rgba(6,182,212,0.18) 0%, transparent 60%);
     }
 
-    .slide-eyebrow { font-size: 0.75rem; font-weight: 300; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.75); margin-bottom: 10px; }
+    .slide-eyebrow { font-size: 0.8rem; font-weight: 400; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.6); margin-bottom: 18px; }
+
+    /* --- Keynote house style: dark slides, one large statement, detail lives in the notes --- */
+    /* Center a sparse standard slide. */
+    .kv-slide .deck-slide__inner { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 4px; max-width: 900px; }
+    .kv-slide.kv-center .deck-slide__inner { align-items: center; text-align: center; }
+    /* The one big line per slide. */
+    .kv-statement { font-size: clamp(2.4rem, 6vw, 5rem); font-weight: 700; line-height: 1.05; letter-spacing: -0.01em; margin: 0; max-width: 18ch; }
+    /* A single hero word or number. */
+    .kv-word { font-size: clamp(3rem, 10vw, 8rem); font-weight: 700; line-height: 1; letter-spacing: -0.02em; margin: 0; }
+    /* At most one short support line — sets up the points below or stands alone. */
+    .kv-support { font-size: clamp(1.1rem, 2vw, 1.5rem); font-weight: 300; color: rgba(255,255,255,0.72); margin: 14px 0 0; max-width: 34ch; }
+    /* Supporting points: 2–4 short cues (3–5 words each), never paragraphs. The presenter expands each verbally. */
+    .kv-points { list-style: none; margin: 28px 0 0; padding: 0; display: flex; flex-direction: column; gap: 14px; max-width: 42ch; }
+    .kv-slide.kv-center .kv-points { align-items: center; }
+    .kv-point { font-size: clamp(1.1rem, 2vw, 1.5rem); font-weight: 400; line-height: 1.3; color: rgba(255,255,255,0.82); }
+    /* Optional: lay the points out as a row of small tiles instead of a stacked list. */
+    .kv-points.kv-points--row { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 16px; max-width: 900px; }
+    .kv-points--row .kv-point { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: var(--eht-radius); padding: 14px 20px; }
+    /* Emphasize at most one word, never a whole line. */
+    .kv-accent { color: #93c5fd; }
+
+    /* Optional density (see framework §5) — kept available, not used by the default deck. */
     .slide-title { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 700; line-height: 1.1; margin: 0 0 12px; }
     .slide-lede { font-size: 1.05rem; font-weight: 300; max-width: 36rem; opacity: 0.9; }
     .section-h2 { font-size: clamp(1.4rem, 2.5vw, 1.8rem); font-weight: 700; margin: 0 0 6px; padding-left: 12px; border-left: 4px solid rgba(96,165,250,0.6); }
@@ -153,68 +175,103 @@
   <nav class="deck-nav" id="deckNav" aria-label="Presentation">
     <span class="deck-brand">Agentforce — Starter</span>
     <a href="#slide-intro">Intro</a>
-    <a href="#slide-context">Context</a>
-    <a href="#slide-motion">Motion</a>
+    <a href="#slide-shift">Shift</a>
+    <a href="#slide-problem">Problem</a>
+    <a href="#slide-idea">Idea</a>
+    <a href="#slide-proof">Proof</a>
     <a href="#slide-map">Map</a>
-    <a href="#slide-next">Next</a>
+    <a href="#slide-next">Close</a>
   </nav>
   <div class="deck" id="main">
-    <section id="slide-intro" class="deck-slide deck-slide--light" data-slide
+    <!--
+      HOUSE STYLE: Keynote / WWDC (see PRESENTATION-FRAMEWORK.md §0).
+      One idea per slide, large white type. A slide may carry a short support
+      line and 2–4 brief cue points (3–5 words each) — NEVER paragraphs or
+      dense bullet lists. The on-slide points are cues; the presenter expands
+      each one verbally. Every slide MUST carry a real data-notes talk track.
+    -->
+    <section id="slide-intro" class="deck-slide deck-slide--light kv-slide kv-center" data-slide
       data-note-title="Intro — opening"
       data-note-time="~1 min"
-      data-notes="Set the frame in one breath: who you are, why you're here, what they'll walk away with.&#10;&#10;Replace this with your own talk track. Use &amp;#10; for line breaks.">
+      data-notes="Set the frame in one breath: who you are, why you're here, and the one outcome they'll walk away with.&#10;&#10;Don't read the slide — it's just the title card. Say the promise out loud, then move.&#10;&#10;(Replace with your own talk track. Use &amp;#10; for line breaks. No real customer name on the slide unless you paste approved copy.)">
       <div class="sparkle-field" data-sparkle-count="50" aria-hidden="true"></div>
       <div class="deck-slide__inner" style="filter: none;">
         <p class="slide-eyebrow reveal-item">Optional eyebrow / program name</p>
-        <h1 class="slide-title reveal-item">Agentforce for your team</h1>
-        <p class="slide-lede reveal-item reveal-2">One-file scroll deck. Replace with approved positioning and a crisp outcome statement (no real customer name here unless you paste it yourself).</p>
-        <a class="btn-primary reveal-item reveal-3" href="#slide-context">Start</a>
+        <h1 class="kv-statement reveal-item reveal-2">Agentforce, for the way you sell.</h1>
+        <a class="btn-primary reveal-item reveal-3" href="#slide-shift" style="margin-top:28px">Start</a>
       </div>
     </section>
 
-    <section id="slide-context" class="deck-slide deck-slide--muted" data-slide
-      data-note-title="Strategic context — SWOT"
-      data-note-time="~3 min"
-      data-notes="Walk the four cards, but don't read them. Land the one insight the account cares about most.">
+    <section id="slide-shift" class="deck-slide deck-slide--muted kv-slide kv-center" data-slide
+      data-note-title="The shift"
+      data-note-time="~2 min"
+      data-notes="This is the before/after. Name how selling worked yesterday, then the shift that's underway.&#10;&#10;The three cues on screen are the destination — you narrate the journey. Take each arrow in turn: what 'manual prep' cost them, what 'instant context' feels like Monday morning; how 'gut feel' became a grounded, defensible next step; why 'one place to sell' beats hopping between tools. Give one concrete example from discovery per line.">
       <div class="sparkle-field" data-sparkle-count="45" aria-hidden="true"></div>
       <div class="deck-slide__inner">
-        <h2 class="section-h2 reveal-item">Strategic context</h2>
-        <p class="section-lede reveal-item reveal-2">SWOT (generic placeholders) — use discovery notes per account in your own file.</p>
-        <div class="section-divider reveal-item">SWOT (example)</div>
-        <div class="grid-4">
-          <div class="punch-card reveal-item"><h3>Strengths</h3><p>Data depth, product breadth, trusted brand.</p></div>
-          <div class="punch-card reveal-item"><h3>Weaknesses</h3><p>Fragmented seller tooling, manual prep.</p></div>
-          <div class="punch-card reveal-item"><h3>Opportunities</h3><p>AI-assisted playbooks, unified CRM context.</p></div>
-          <div class="punch-card reveal-item"><h3>Threats</h3><p>Commoditization, faster-moving competitors.</p></div>
-        </div>
+        <p class="slide-eyebrow reveal-item">The shift</p>
+        <h2 class="kv-statement reveal-item reveal-2">The way you sell is <span class="kv-accent">changing</span>.</h2>
+        <ul class="kv-points reveal-item reveal-3">
+          <li class="kv-point">From manual prep &rarr; instant context</li>
+          <li class="kv-point">From gut feel &rarr; grounded next step</li>
+          <li class="kv-point">From tool-hopping &rarr; one place to sell</li>
+        </ul>
       </div>
     </section>
 
-    <section id="slide-motion" class="deck-slide deck-slide--light" data-slide
-      data-note-title="Sales motion"
+    <section id="slide-problem" class="deck-slide deck-slide--light kv-slide kv-center" data-slide
+      data-note-title="The problem"
+      data-note-time="~2 min"
+      data-notes="Three short cues on screen; the evidence and the numbers are spoken. Take each cue and put a figure behind it — hours a week on manual research, the tax of context switching, the time lost to CRM housekeeping — with a concrete example from discovery.&#10;&#10;Keep the stats in your voice, not on the slide. Land the cost of the status quo so the next slide (the idea) feels like relief.">
+      <div class="sparkle-field" data-sparkle-count="45" aria-hidden="true"></div>
+      <div class="deck-slide__inner">
+        <p class="slide-eyebrow reveal-item">The problem</p>
+        <h2 class="kv-statement reveal-item reveal-2">Selling time is spent everywhere but selling.</h2>
+        <p class="kv-support reveal-item reveal-3">A rep's week, before the deal even moves:</p>
+        <ul class="kv-points kv-points--row reveal-item reveal-4">
+          <li class="kv-point">Manual research</li>
+          <li class="kv-point">Context switching</li>
+          <li class="kv-point">CRM housekeeping</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="slide-idea" class="deck-slide deck-slide--muted kv-slide kv-center" data-slide
+      data-note-title="The idea — core message"
       data-note-time="~3 min"
-      data-notes="Mirror how the team actually sells today. Each step should feel obvious to them — that's the point.">
+      data-notes="This is the heart of the talk. State the core idea plainly, then expand on each cue: 'briefs every account' — where the brief comes from and how fresh it is; 'drafts the next best action' — grounded in their data, the rep stays in control; 'updates the record for you' — the housekeeping from the problem slide, now automatic.&#10;&#10;Everything you'd have written in a paragraph goes here in the notes, not on the slide. The line and the three cues are hooks you talk around.">
       <div class="sparkle-field" data-sparkle-count="50" aria-hidden="true"></div>
       <div class="deck-slide__inner">
-        <h2 class="section-h2 reveal-item">Sales motion (edit labels)</h2>
-        <p class="section-lede reveal-item reveal-2">Three to five steps that mirror how the team actually sells today.</p>
-        <div class="stepper">
-          <div class="step reveal-item"><span class="step-num" aria-hidden="true">1</span><h3>Qualify &amp; plan</h3><p>Who is live? What is the play?</p></div>
-          <div class="step reveal-item reveal-2"><span class="step-num" aria-hidden="true">2</span><h3>Context</h3><p>Account and opportunity context in CRM.</p></div>
-          <div class="step reveal-item reveal-3"><span class="step-num" aria-hidden="true">3</span><h3>Propose</h3><p>Deals with defensible value.</p></div>
-        </div>
+        <p class="slide-eyebrow reveal-item">The idea</p>
+        <h2 class="kv-statement reveal-item reveal-2">An agent that does the prep, so they can do the deal.</h2>
+        <p class="kv-support reveal-item reveal-3">Works on the CRM you already run.</p>
+        <ul class="kv-points reveal-item reveal-4">
+          <li class="kv-point">Briefs every account</li>
+          <li class="kv-point">Drafts the next best action</li>
+          <li class="kv-point">Updates the record for you</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="slide-proof" class="deck-slide deck-slide--light kv-slide kv-center" data-slide
+      data-note-title="Proof — one big number"
+      data-note-time="~2 min"
+      data-notes="One number, said with conviction. Put the metric on screen and explain what it means, where it came from, and why it's credible for this account.&#10;&#10;Use a placeholder until you have an approved, non-confidential figure. Don't crowd the slide with a second stat — if there's more proof, speak it.">
+      <div class="sparkle-field" data-sparkle-count="40" aria-hidden="true"></div>
+      <div class="deck-slide__inner">
+        <p class="slide-eyebrow reveal-item">Proof (placeholder)</p>
+        <p class="kv-word reveal-item reveal-2"><span class="kv-accent">40%</span></p>
+        <p class="kv-support reveal-item reveal-3">less time on pre-call prep.</p>
       </div>
     </section>
 
     <section id="slide-map" class="deck-slide deck-slide--muted" data-slide
       data-note-title="System map"
-      data-note-time="~4 min"
-      data-notes="Trace the flow left to right once, then stop. Let the diagram do the work — resist explaining every node.">
+      data-note-time="~3 min"
+      data-notes="The one intentionally-dense slide — a diagram earns its place. Trace the flow left to right once, then stop. Let the diagram do the work; resist explaining every node.&#10;&#10;Tighten labels and reorder the bottom row so arrows don't cross. Remove duplicate subgraphs for single nodes.">
       <div class="sparkle-field" data-sparkle-count="40" aria-hidden="true"></div>
       <div class="deck-slide__inner">
-        <h2 class="section-h2 reveal-item">System map (example Mermaid)</h2>
-        <p class="section-lede reveal-item reveal-2">Tighten labels; reorder the bottom row so arrows don’t cross. Remove duplicate subgraphs for single nodes.</p>
-        <div class="mermaid-wrap reveal-item reveal-3">
+        <p class="slide-eyebrow reveal-item">How it fits together</p>
+        <div class="mermaid-wrap reveal-item reveal-2" style="margin-top:14px">
           <pre class="mermaid">graph TD
   subgraph a["User layer"]
     U1["Record page A"]
@@ -234,16 +291,15 @@
       </div>
     </section>
 
-    <section id="slide-next" class="deck-slide deck-slide--light" data-slide
-      data-note-title="Next steps — close"
+    <section id="slide-next" class="deck-slide deck-slide--light kv-slide kv-center" data-slide
+      data-note-title="Close — the ask"
       data-note-time="~2 min"
-      data-notes="Name the very next action and who owns it. Leave them with momentum, not a summary.&#10;&#10;Off-slide talk track (sponsorship, pricing, risks) can live here — the audience never sees these notes.">
+      data-notes="Name the very next action and who owns it. Leave them with momentum, not a summary.&#10;&#10;Speak the plan — workshop, pilot, production — and align it to their GTM and compliance gates. The slide just holds the ask; you say the rest.&#10;&#10;Off-slide talk track (sponsorship, pricing, internal risks) can live here — the audience never sees these notes.">
       <div class="sparkle-field" data-sparkle-count="50" aria-hidden="true"></div>
-      <div class="deck-slide__inner" style="text-align:center">
-        <h2 class="section-h2 reveal-item" style="border:none;padding:0">Next steps</h2>
-        <p class="section-lede reveal-item" style="margin:0 auto 8px;max-width:32rem">Four-week build outline — replace with your delivery plan.</p>
-        <p class="reveal-item reveal-2" style="font-size:0.8rem;opacity:0.75;max-width:30rem;margin:0 auto 16px">Workshop, pilot, production — align to your GTM and compliance gates.</p>
-        <a class="btn-primary reveal-item reveal-3" href="mailto:you@example.com?subject=Next%20step">Email placeholder</a>
+      <div class="deck-slide__inner">
+        <p class="slide-eyebrow reveal-item">Next step</p>
+        <h2 class="kv-statement reveal-item reveal-2">Let's build the first agent together.</h2>
+        <a class="btn-primary reveal-item reveal-3" href="mailto:you@example.com?subject=Next%20step" style="margin-top:28px">Email placeholder</a>
       </div>
     </section>
   </div>
