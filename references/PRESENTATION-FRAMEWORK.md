@@ -257,7 +257,8 @@ The starter includes a **hidden presenter-notes window** so the speaker can read
 - **`Shift+P`** opens the notes in a separate window (a keydown is a valid user gesture, so the popup is allowed). There is **no visible control** — the shortcut is the only trigger, so nothing shows on the presenter's shared screen. Plain `P`, `Ctrl/Cmd+Shift+P`, and keypresses inside form fields are ignored.
 - The window renders from a **`blob:` URL** (not `document.write`) so its inline `<script>` reliably runs in Chrome; on load it posts `presenterReady` back to the opener, which then pushes the current slide.
 - An **IntersectionObserver** (same `rootMargin` convention as the nav observer — always use `%` units, never a bare `0`) tracks the active slide and pushes its note via `postMessage` as you scroll.
-- The window shows slide position (`Slide n / total`), title, time budget, the note body, prev/next slide labels, and a **start/pause/reset timer**.
+- **Prev / Next buttons** in the window header advance the deck: each posts a `navigate` message back to the opener, which calls `scrollIntoView` on the neighboring slide (reduced-motion-aware); the observer then syncs the note. Buttons disable at the ends (`atStart` / `atEnd` flags in the note message). This lets the presenter drive from the notes window without touching the deck window on the shared screen.
+- The window shows slide position (`Slide n / total`), title, time budget, the note body, prev/next slide labels, prev/next **buttons**, and a **start/pause/reset timer**.
 - A slide with no `data-notes` shows `(no notes for this slide)`.
 
 **Presenter workflow:** open the deck on your laptop, press `Shift+P`, drag the notes window to your screen, and mirror only the deck window to the room. Allow the popup once per browser — do this during setup, before the audience is watching.
@@ -286,6 +287,6 @@ This standalone repo does **not** require those files; the deck works as plain H
 - [ ] Keyboard: tab through nav and skip link.
 - [ ] Test at 1280px and 390px width.
 - [ ] Verify Mermaid block renders (CDN reachable).
-- [ ] If a talk track was added: `Shift+P` opens the notes window and it follows the slide (allow the popup once). No confidential notes if the file itself will be shared externally — `data-notes` ships in the HTML source.
+- [ ] If a talk track was added: `Shift+P` opens the notes window, it follows the slide, and the Prev / Next buttons advance the deck (allow the popup once). No confidential notes if the file itself will be shared externally — `data-notes` ships in the HTML source.
 
 This framework is the **structural** contract; visual tuning is expected per engagement.

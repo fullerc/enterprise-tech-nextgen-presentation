@@ -47,7 +47,7 @@ The template ships a hidden presenter-notes window. In this house style notes ar
 
 Behavior the presenter gets, no extra wiring:
 
-- Press **`Shift+P`** to open the notes in a separate window (no visible on-screen control, so the audience never sees it). The window follows whatever slide is on screen and includes a start/pause/reset timer plus prev/next slide labels.
+- Press **`Shift+P`** to open the notes in a separate window (no visible on-screen control, so the audience never sees it). The window follows whatever slide is on screen and includes **Prev / Next buttons** to advance the deck from the notes window, a start/pause/reset timer, and prev/next slide labels.
 - If a slide has no `data-notes`, its note reads `(no notes for this slide)` — never ship that in this house style; every slide gets a real talk track.
 - Off-slide talk track (sponsorship, pricing, internal risks) belongs in `data-notes`, not on the slide — the notes window is private to the presenter's screen.
 

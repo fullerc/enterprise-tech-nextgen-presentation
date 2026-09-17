@@ -396,6 +396,7 @@
     if (!slides.length) return;
     var popup = null;
     var current = -1;
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     // Build the ordered note model once.
     var notes = slides.map(function (s, i) {
@@ -422,6 +423,11 @@
       '  .clock { font-variant-numeric: tabular-nums; font-size:1.1rem; color:var(--blue); }',
       '  .clock button { margin-left:8px; font-size:0.7rem; padding:3px 8px; border-radius:6px;',
       '                  border:1px solid rgba(226,232,240,0.35); background:transparent; color:var(--blue); cursor:pointer; }',
+      '  .nav { display:flex; gap:8px; }',
+      '  .nav button { font-size:0.9rem; padding:6px 14px; border-radius:8px; border:1px solid rgba(96,165,250,0.45);',
+      '                background:rgba(96,165,250,0.12); color:#eef2ff; cursor:pointer; }',
+      '  .nav button:hover:not(:disabled) { background:rgba(96,165,250,0.28); }',
+      '  .nav button:disabled { opacity:0.35; cursor:default; }',
       '  main { flex:1; overflow:auto; padding:26px 30px; }',
       '  h1 { font-size:1.5rem; line-height:1.2; margin:0 0 4px; }',
       '  .time-tag { font-size:0.85rem; color:var(--gold); margin-bottom:18px; }',
@@ -431,7 +437,10 @@
       '  .next { color:#c3ccea; }',
       '  .waiting { color:#9aa6c7; font-size:1.1rem; }',
       '</style></head><body>',
-      '  <header><span class="meta" id="pos">Slide —</span>',
+      '  <header>',
+      '    <span class="nav"><button id="navPrev" title="Previous slide">&#8249; Prev</button>',
+      '      <button id="navNext" title="Next slide">Next &#8250;</button></span>',
+      '    <span class="meta" id="pos">Slide —</span>',
       '    <span class="clock"><span id="clk">00:00</span>',
       '      <button id="clkToggle">Start</button><button id="clkReset">Reset</button></span>',
       '  </header>',
@@ -443,9 +452,14 @@
       '  function tick(){elapsed++;document.getElementById("clk").textContent=fmt(elapsed);}',
       '  document.getElementById("clkToggle").onclick=function(){running=!running;this.textContent=running?"Pause":"Start";if(running){t=setInterval(tick,1000);}else{clearInterval(t);}};',
       '  document.getElementById("clkReset").onclick=function(){elapsed=0;document.getElementById("clk").textContent="00:00";};',
+      '  function go(dir){ if(window.opener){ try{ window.opener.postMessage({type:"navigate",dir:dir},"*"); }catch(_){} } }',
+      '  document.getElementById("navPrev").onclick=function(){ go(-1); };',
+      '  document.getElementById("navNext").onclick=function(){ go(1); };',
       '  window.addEventListener("message",function(e){',
       '    var d=e.data; if(!d||d.type!=="note")return;',
       '    window.__gotNote=true;',
+      '    document.getElementById("navPrev").disabled=!!d.atStart;',
+      '    document.getElementById("navNext").disabled=!!d.atEnd;',
       '    document.getElementById("pos").textContent="Slide "+d.n+" / "+d.total;',
       '    document.getElementById("content").innerHTML=',
       '      "<h1></h1><div class=\\"time-tag\\"></div><div class=\\"body\\"></div>";',
@@ -469,14 +483,27 @@
         n: cur.n, total: cur.total,
         title: cur.title, time: cur.time, body: cur.body,
         prev: i > 0 ? notes[i - 1].title : '',
-        next: i < notes.length - 1 ? notes[i + 1].title : ''
+        next: i < notes.length - 1 ? notes[i + 1].title : '',
+        atStart: i <= 0,
+        atEnd: i >= notes.length - 1
       }, '*');
     }
 
-    // The popup pings us when its listener is live; push whatever slide is on screen now.
+    // Scroll a slide into view; the IntersectionObserver below then updates
+    // `current` and pushes its note, so the popup stays in sync automatically.
+    function goToSlide(idx) {
+      if (idx < 0 || idx >= slides.length) return;
+      slides[idx].scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+    }
+
     window.addEventListener('message', function (e) {
-      if (e.data && e.data.type === 'presenterReady') {
+      if (!e.data) return;
+      // The popup pings us when its listener is live; push whatever slide is on screen now.
+      if (e.data.type === 'presenterReady') {
         send(current >= 0 ? current : 0);
+      } else if (e.data.type === 'navigate') {
+        // Prev/Next buttons in the presenter window advance the deck.
+        goToSlide((current >= 0 ? current : 0) + (e.data.dir < 0 ? -1 : 1));
       }
     });
 
